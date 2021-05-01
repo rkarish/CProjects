@@ -1,7 +1,8 @@
 #include <stdio.h>
 #include <time.h>
 
-struct scrabbleTiles {
+struct scrabbleTiles
+{
 	int points[26], distribution[26];
 };
 
@@ -11,19 +12,24 @@ int dictionaryIndex = 0;
  * - This function returns 7 pseudo random capital letters A-Z
  * - Returns a char pointer
  */
-char *generateTiles(struct scrabbleTiles scrabbleTiles) {
+char *generateTiles(struct scrabbleTiles scrabbleTiles)
+{
 	char *tiles = malloc(7 * sizeof(char));
-	int seed = (int) time(NULL), i = 0, j = 0, randomChar = 0;
+	int seed = (int)time(NULL), i = 0, j = 0, randomChar = 0;
 	srand(seed);
-	for (i = 0; i < 7; i++) {
+	for (i = 0; i < 7; i++)
+	{
 		randomChar = (rand() % 26) + 65;
-		for (j = 0; j < 26; j++) {
-			if (randomChar == (j + 65) && scrabbleTiles.distribution[j] > 0) {
-				tiles[i] = (char) randomChar;
+		for (j = 0; j < 26; j++)
+		{
+			if (randomChar == (j + 65) && scrabbleTiles.distribution[j] > 0)
+			{
+				tiles[i] = (char)randomChar;
 				scrabbleTiles.distribution[j]--;
 				break;
-			} else if (randomChar == (j + 65)
-					&& scrabbleTiles.distribution[j] == 0) {
+			}
+			else if (randomChar == (j + 65) && scrabbleTiles.distribution[j] == 0)
+			{
 				i--;
 				break;
 			}
@@ -36,12 +42,16 @@ char *generateTiles(struct scrabbleTiles scrabbleTiles) {
  * - This function determines a words point value
  * - Returns the point value of the word
  */
-int calculatePointValue(struct scrabbleTiles scrabbleTiles, char *wordInput) {
+int calculatePointValue(struct scrabbleTiles scrabbleTiles, char *wordInput)
+{
 	int i = 0, j = 0, points = 0;
 
-	for (i = 0; i < strlen(wordInput); i++) {
-		for (j = 0; j < 26; j++) {
-			if ((int) wordInput[i] == (j + 65)) {
+	for (i = 0; i < strlen(wordInput); i++)
+	{
+		for (j = 0; j < 26; j++)
+		{
+			if ((int)wordInput[i] == (j + 65))
+			{
 				points += scrabbleTiles.points[j];
 			}
 		}
@@ -55,16 +65,23 @@ int calculatePointValue(struct scrabbleTiles scrabbleTiles, char *wordInput) {
  * - Returns 1 for a validated word and 0 for an invalid word
  */
 int validateWord(char *playerTiles, char *wordInput, char dictionary[][7],
-		int dictionaryIndex) {
+				 int dictionaryIndex)
+{
 	int i = 0, j = 0, k = 0, match = 0;
 
-	for (i = 0; i < strlen(playerTiles); i++) {
-		for (j = 0; j < strlen(wordInput); j++) {
-			if (playerTiles[i] == wordInput[j]) {
+	for (i = 0; i < strlen(playerTiles); i++)
+	{
+		for (j = 0; j < strlen(wordInput); j++)
+		{
+			if (playerTiles[i] == wordInput[j])
+			{
 				match++;
-				if (match >= strlen(wordInput)) {
-					for (k = 0; k < dictionaryIndex; k++) {
-						if (strcmp(dictionary[k], wordInput) == 0) {
+				if (match >= strlen(wordInput))
+				{
+					for (k = 0; k < dictionaryIndex; k++)
+					{
+						if (strcmp(dictionary[k], wordInput) == 0)
+						{
 							return 1;
 						}
 					}
@@ -79,17 +96,19 @@ int validateWord(char *playerTiles, char *wordInput, char dictionary[][7],
  * - This function opens a text file and reads in the dictionary
  * - Returns a pointer to the dictionary array
  */
-char *importDictionary() {
+char *importDictionary()
+{
 	FILE *ifp;
 	int i = 0;
-	char (*dictionary)[19];
+	char(*dictionary)[19];
 
 	ifp = fopen("dictionary.txt", "r");
 	fscanf(ifp, "%d", &dictionaryIndex);
 
 	dictionary = malloc(dictionaryIndex * sizeof(*dictionary));
 
-	for (i = 0; i < dictionaryIndex; i++) {
+	for (i = 0; i < dictionaryIndex; i++)
+	{
 		fscanf(ifp, "%s", dictionary[i]);
 	}
 
@@ -97,7 +116,8 @@ char *importDictionary() {
 	return *dictionary;
 }
 
-int main() {
+int main()
+{
 	/*
 	 * - i 					= counter variable
 	 * - j					= secondary counter variable
@@ -112,9 +132,12 @@ int main() {
 	 */
 	int i = 0, j = 0, option = 0, tempPoints = 0, points = 0;
 	char wordInput[7], bestWord[7], *playerTiles, *dictionary;
-	struct scrabbleTiles scrabbleTiles = { { 1, 3, 3, 2, 1, 4, 2, 4, 1, 8, 5, 1,
-			3, 1, 1, 3, 10, 1, 1, 1, 1, 4, 4, 8, 4, 10 }, { 9, 2, 2, 4, 12, 2,
-			3, 2, 9, 1, 1, 4, 2, 6, 8, 2, 1, 6, 4, 6, 4, 2, 2, 1, 2, 1 }, };
+	struct scrabbleTiles scrabbleTiles = {
+		{1, 3, 3, 2, 1, 4, 2, 4, 1, 8, 5, 1,
+		 3, 1, 1, 3, 10, 1, 1, 1, 1, 4, 4, 8, 4, 10},
+		{9, 2, 2, 4, 12, 2,
+		 3, 2, 9, 1, 1, 4, 2, 6, 8, 2, 1, 6, 4, 6, 4, 2, 2, 1, 2, 1},
+	};
 
 	/*
 	 * - Use the importDictionary function to import the dictionary
@@ -140,38 +163,48 @@ int main() {
 	 * - Save the largest score and print the value and word when the user quits
 	 */
 	printf("Welcome to the Scrabble Practice Program!\nHere are your letters: ");
-	for (i = 0; i < 7; i++) {
+	for (i = 0; i < 7; i++)
+	{
 		printf("%c", playerTiles[i]);
 	}
-	while (option != 2) {
+	while (option != 2)
+	{
 		printf("\nWhat would you like to do?\n\t1 - Enter Word\n\t2- Quit\n");
 		//fflush(NULL);
 		scanf("%d", &option);
-		if (option == 1) {
+		if (option == 1)
+		{
 			printf("Enter the word:");
 			//fflush(NULL);
 			scanf("%s", &wordInput);
-			for (i = 0; i < strlen(wordInput); i++) {
+			for (i = 0; i < strlen(wordInput); i++)
+			{
 				wordInput[i] = toupper(wordInput[i]);
 			}
 			if (validateWord(playerTiles, wordInput, dictionary,
-					dictionaryIndex) == 1) {
+							 dictionaryIndex) == 1)
+			{
 				tempPoints = calculatePointValue(scrabbleTiles, wordInput);
 				printf("That word is worth %d points.", tempPoints);
-				if (tempPoints > points) {
+				if (tempPoints > points)
+				{
 					points = tempPoints;
-					for (j = 0; j < 7; j++) {
+					for (j = 0; j < 7; j++)
+					{
 						bestWord[j] = wordInput[j];
 					}
 				}
 				continue;
-			} else {
+			}
+			else
+			{
 				printf("The word you entered isn't correct.");
 				continue;
 			}
 		}
 	}
-	if (points != 0) {
+	if (points != 0)
+	{
 		printf("Your best word was %s worth %d points.", bestWord, points);
 	}
 
